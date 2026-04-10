@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recensement – Amicale des Etudiants Ivoirienne CESAG</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #F47920;
+      --green:  #009A44;
+      --white:  #FAFAF7;
+      --ink:    #1A1A1A;
+      --muted:  #6B6B6B;
+      --border: #E0DDD5;
+      --card:   #FFFFFF;
+      --shadow: rgba(0,0,0,0.08);
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      padding: 24px;
+      overflow-x: hidden;
+    }
+
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    body::before {
+      width: 500px; height: 500px;
+      top: -120px; right: -120px;
+      background: radial-gradient(circle, rgba(244,121,32,0.12) 0%, transparent 70%);
+    }
+    body::after {
+      width: 400px; height: 400px;
+      bottom: -100px; left: -100px;
+      background: radial-gradient(circle, rgba(0,154,68,0.10) 0%, transparent 70%);
+    }
+
+    .page-wrapper { position: relative; z-index: 1; width: 100%; max-width: 560px; }
+
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      box-shadow: 0 2px 4px var(--shadow), 0 20px 60px rgba(0,0,0,0.10);
+      overflow: hidden;
+      animation: rise 0.6s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* HEADER */
+    .card-header {
+      position: relative;
+      padding: 36px 36px 28px;
+      background: var(--ink);
+      overflow: hidden;
+    }
+    .header-stripe {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--orange) 33.33%, #FFFFFF 33.33% 66.66%, var(--green) 66.66%);
+    }
+    .flag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 100px;
+      padding: 5px 14px 5px 8px;
+      margin-bottom: 18px;
+    }
+    .flag-badge .flag-icon { font-size: 20px; line-height: 1; }
+    .flag-badge span {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+    }
+    .header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px; font-weight: 900;
+      color: #FFFFFF; line-height: 1.15; margin-bottom: 8px;
+    }
+    .header-title em { font-style: normal; color: var(--orange); }
+    .header-sub { font-size: 14px; color: rgba(255,255,255,0.55); font-weight: 300; letter-spacing: 0.03em; }
+    .header-deco {
+      position: absolute; right: -30px; top: -30px;
+      width: 160px; height: 160px; border-radius: 50%;
+      border: 30px solid rgba(255,255,255,0.04);
+    }
+    .header-deco2 {
+      position: absolute; right: 60px; top: 80px;
+      width: 80px; height: 80px; border-radius: 50%;
+      border: 20px solid rgba(244,121,32,0.15);
+    }
+
+    /* BODY */
+    .card-body { padding: 32px 36px 36px; }
+    .field + .field { margin-top: 20px; }
+
+    label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: var(--ink); letter-spacing: 0.03em; margin-bottom: 8px;
+    }
+    label .req { color: var(--orange); margin-left: 2px; }
+
+    .input-wrap { position: relative; }
+    .input-icon {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted); font-size: 16px; pointer-events: none;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    select {
+      width: 100%;
+      padding: 13px 14px 13px 42px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px; color: var(--ink);
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 12px; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      appearance: none; -webkit-appearance: none;
+    }
+    input::placeholder { color: #BDBDB5; }
+    input:focus, select:focus {
+      border-color: var(--orange);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 4px rgba(244,121,32,0.10);
+    }
+
+    /* Autocomplete */
+    .autocomplete-wrapper { position: relative; }
+    .suggestions {
+      display: none;
+      position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+      background: #fff;
+      border: 1.5px solid var(--orange);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+      z-index: 50; overflow: hidden;
+      max-height: 220px; overflow-y: auto;
+    }
+    .suggestions.open { display: block; }
+    .suggestion-item {
+      padding: 11px 16px; font-size: 14px;
+      cursor: pointer; color: var(--ink);
+      transition: background 0.15s;
+      border-bottom: 1px solid var(--border);
+    }
+    .suggestion-item:last-child { border-bottom: none; }
+    .suggestion-item:hover, .suggestion-item.active {
+      background: rgba(244,121,32,0.08);
+      color: var(--orange); font-weight: 600;
+    }
+
+    .select-arrow {
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none; color: var(--muted);
+    }
+
+    .notice {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(0,154,68,0.07);
+      border: 1px solid rgba(0,154,68,0.18);
+      border-radius: 10px; padding: 12px 14px;
+      margin-top: 24px; font-size: 13px;
+      color: var(--green); font-weight: 500;
+    }
+    .notice svg { flex-shrink: 0; }
+
+    .error-banner {
+      display: none;
+      background: rgba(229,57,53,0.08);
+      border: 1px solid rgba(229,57,53,0.25);
+      border-radius: 10px; padding: 12px 14px;
+      margin-top: 16px; font-size: 13px;
+      color: #C62828; font-weight: 500;
+    }
+    .error-banner.show { display: block; }
+
+    .field-error { font-size: 12px; color: #E53935; margin-top: 5px; display: none; }
+    .field-error.show { display: block; }
+
+    .submit-btn {
+      margin-top: 28px; width: 100%; padding: 16px;
+      background: linear-gradient(135deg, var(--orange) 0%, #E06010 100%);
+      color: #FFFFFF; font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      border: none; border-radius: 14px; cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+      box-shadow: 0 6px 20px rgba(244,121,32,0.35);
+    }
+    .submit-btn::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+      border-radius: inherit;
+    }
+    .submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(244,121,32,0.40); }
+    .submit-btn:active:not(:disabled) { transform: translateY(0); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* FOOTER */
+    .card-footer { text-align: center; padding: 0 36px 28px; }
+    .card-footer p { font-size: 12px; color: var(--muted); }
+    .footer-dots { display: flex; justify-content: center; gap: 6px; margin-top: 16px; }
+    .footer-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    /* SUCCESS MODAL */
+    .success-overlay {
+      display: none; position: fixed; inset: 0; z-index: 100;
+      background: rgba(26,26,26,0.55);
+      backdrop-filter: blur(6px);
+      align-items: center; justify-content: center;
+      animation: fadein 0.3s ease;
+    }
+    .success-overlay.show { display: flex; }
+    @keyframes fadein { from { opacity:0; } to { opacity:1; } }
+
+    .success-card {
+      background: #fff; border-radius: 24px;
+      padding: 48px 40px 36px; max-width: 380px;
+      width: 90%; text-align: center;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.15);
+      animation: pop 0.4s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes pop { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+
+    .check-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), #00C05A);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 8px 24px rgba(0,154,68,0.3);
+    }
+    .success-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px; font-weight: 900;
+      color: var(--ink); margin-bottom: 10px;
+    }
+    .success-msg { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .success-name { font-weight: 700; color: var(--orange); }
+    .close-btn {
+      margin-top: 28px; padding: 12px 32px;
+      background: var(--ink); color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600; font-size: 14px;
+      border: none; border-radius: 100px;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .close-btn:hover { background: #333; }
+
+    @media (max-width: 480px) {
+      .card-header, .card-body, .card-footer { padding-left: 24px; padding-right: 24px; }
+      .header-title { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+  <div class="card">
+
+    <div class="card-header">
+      <div class="header-stripe"></div>
+      <div class="header-deco"></div>
+      <div class="header-deco2"></div>
+      <div class="flag-badge">
+        <span class="flag-icon">🇨🇮</span>
+        <span>Côte d'Ivoire · CESAG</span>
+      </div>
+      <h1 class="header-title">Recensement<br><em>Étudiant·es</em></h1>
+      <p class="header-sub">Communauté Ivoirienne — Dakar, Sénégal</p>
+    </div>
+
+    <div class="card-body">
+      <form id="mainForm" novalidate>
+
+        <!-- Nom -->
+        <div class="field">
+          <label for="nom">Nom & Prénoms <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input type="text" id="nom" placeholder="Ex : KOUADIO Koffi" autocomplete="name" required />
+          </div>
+          <div class="field-error" id="err-nom">Veuillez entrer votre nom et prénoms.</div>
+        </div>
+
+        <!-- Programme — texte libre + suggestions -->
+        <div class="field">
+          <label for="programme">Programme / Filière <span class="req">*</span></label>
+          <div class="input-wrap autocomplete-wrapper">
+            <span class="input-icon">🎓</span>
+            <input
+              type="text"
+              id="programme"
+              placeholder="Tapez ou choisissez votre filière…"
+              autocomplete="off"
+              required
+            />
+            <div class="suggestions" id="suggestions"></div>
+          </div>
+          <div class="field-error" id="err-programme">Veuillez indiquer votre filière.</div>
+        </div>
+
+        <!-- Promotion -->
+        <div class="field">
+          <label for="promo">Année / Promotion <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">📅</span>
+            <select id="promo" required>
+              <option value="" disabled selected>Sélectionner…</option>
+              <option>2022 – 2024</option>
+              <option>2023 – 2025</option>
+              <option>2024 – 2026</option>
+              <option>2025 – 2027</option>
+              <option>Autre</option>
+            </select>
+            <span class="select-arrow">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </div>
+          <div class="field-error" id="err-promo">Veuillez sélectionner votre promotion.</div>
+        </div>
+
+        <!-- WhatsApp -->
+        <div class="field">
+          <label for="tel">Numéro WhatsApp</label>
+          <div class="input-wrap">
+            <span class="input-icon">📱</span>
+            <input type="tel" id="tel" placeholder="+221 XX XXX XX XX" autocomplete="tel"/>
+          </div>
+        </div>
+
+        <div class="notice">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <circle cx="9" cy="9" r="8" stroke="#009A44" stroke-width="1.5"/>
+            <path d="M9 8v5" stroke="#009A44" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="9" cy="5.5" r="1" fill="#009A44"/>
+          </svg>
+          Vos données sont confidentielles et utilisées uniquement à des fins associatives.
+        </div>
+
+        <div class="error-banner" id="errorBanner">
+          ⚠️ Une erreur est survenue lors de l'enregistrement. Vérifiez votre connexion et réessayez.
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">S'enregistrer →</button>
+      </form>
+    </div>
+
+    <div class="card-footer">
+      <p>Communauté Ivoirienne du CESAG · Dakar 🇸🇳</p>
+      <div class="footer-dots">
+        <div class="footer-dot" style="background:#F47920"></div>
+        <div class="footer-dot" style="background:#FFFFFF;border:1px solid #ddd"></div>
+        <div class="footer-dot" style="background:#009A44"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="check-circle">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <path d="M8 16l5 5 11-11" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2 class="success-title">Enregistré·e ! 🎉</h2>
+    <p class="success-msg">
+      Bienvenue <span class="success-name" id="successName"></span>,<br>
+      votre inscription a bien été sauvegardée<br>dans Google Sheets. ✅
+    </p>
+    <button class="close-btn" onclick="closeSuccess()">Fermer</button>
+  </div>
+</div>
+
+<script>
+  // ================================================================
+  // 🔧 ÉTAPE FINALE : colle ton URL Power Automate ici
+  // ================================================================
+  const POWER_AUTOMATE_URL = "https://script.google.com/macros/s/AKfycbyEWTooXSsVQ-CurxNKJEND5GCn7Bc1zGQyIonGnF_-a_SRL8u38b0-LZzNiLXw4jMH/exec";
+  // ================================================================
+
+  // Suggestions de filières (l'utilisateur peut aussi écrire librement)
+  const FILIERES = [
+    "Master IT-Finance",
+    "Comptabilité – Contrôle – Audit (CCA)",
+    "Gestion des Entreprises (GE)",
+    "Marketing & Commerce International",
+    "Banque & Finance",
+    "Ressources Humaines & Management",
+    "Gestion des Projets & Politiques Publiques",
+    "MBA",
+    "Doctorat",
+  ];
+
+  // --- Autocomplete ---
+  const programmeInput = document.getElementById('programme');
+  const suggestionsBox  = document.getElementById('suggestions');
+  let activeIndex = -1;
+
+  programmeInput.addEventListener('input', () => {
+    const val = programmeInput.value.trim().toLowerCase();
+    suggestionsBox.innerHTML = '';
+    activeIndex = -1;
+    if (!val) { suggestionsBox.classList.remove('open'); return; }
+
+    const matches = FILIERES.filter(f => f.toLowerCase().includes(val));
+    if (!matches.length) { suggestionsBox.classList.remove('open'); return; }
+
+    matches.forEach(m => {
+      const div = document.createElement('div');
+      div.className = 'suggestion-item';
+      div.textContent = m;
+      div.addEventListener('mousedown', () => {
+        programmeInput.value = m;
+        suggestionsBox.classList.remove('open');
+      });
+      suggestionsBox.appendChild(div);
+    });
+    suggestionsBox.classList.add('open');
+  });
+
+  programmeInput.addEventListener('keydown', (e) => {
+    const items = suggestionsBox.querySelectorAll('.suggestion-item');
+    if (!suggestionsBox.classList.contains('open') || !items.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); activeIndex = Math.min(activeIndex + 1, items.length - 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); activeIndex = Math.max(activeIndex - 1, 0); }
+    else if (e.key === 'Enter' && activeIndex >= 0) {
+      e.preventDefault();
+      programmeInput.value = items[activeIndex].textContent;
+      suggestionsBox.classList.remove('open'); return;
+    } else if (e.key === 'Escape') { suggestionsBox.classList.remove('open'); return; }
+    items.forEach((it, i) => it.classList.toggle('active', i === activeIndex));
+  });
+
+  document.addEventListener('click', e => {
+    if (!programmeInput.contains(e.target)) suggestionsBox.classList.remove('open');
+  });
+
+  // --- Helpers validation ---
+  function setError(id, show) {
+    document.getElementById(id)?.classList.toggle('show', show);
+  }
+  function highlightField(el, hasError) {
+    el.style.borderColor = hasError ? '#E53935' : '';
+    el.style.boxShadow   = hasError ? '0 0 0 4px rgba(229,57,53,0.12)' : '';
+  }
+
+  // Clear errors on typing
+  ['nom','programme','promo'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      setError('err-' + id, false);
+      highlightField(document.getElementById(id), false);
+    });
+  });
+
+  // --- Submit ---
+  document.getElementById('mainForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const nom       = document.getElementById('nom').value.trim();
+    const programme = document.getElementById('programme').value.trim();
+    const promo     = document.getElementById('promo').value;
+    const tel       = document.getElementById('tel').value.trim();
+
+    // Validation
+    let valid = true;
+    [{ id: 'nom', val: nom, err: 'err-nom' },
+     { id: 'programme', val: programme, err: 'err-programme' },
+     { id: 'promo', val: promo, err: 'err-promo' }
+    ].forEach(({ id, val, err }) => {
+      const bad = !val;
+      setError(err, bad);
+      highlightField(document.getElementById(id), bad);
+      if (bad) valid = false;
+    });
+    if (!valid) return;
+
+    // Loading
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Enregistrement…';
+    document.getElementById('errorBanner').classList.remove('show');
+
+    const payload = {
+      nom,
+      programme,
+      promotion: promo,
+      whatsapp: tel || "—",
+      date: new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Dakar' })
+    };
+
+    try {
+      const res = await fetch(POWER_AUTOMATE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+
+      document.getElementById('successName').textContent = nom;
+      document.getElementById('successOverlay').classList.add('show');
+      document.getElementById('mainForm').reset();
+
+    } catch (err) {
+      console.error(err);
+      document.getElementById('errorBanner').classList.add('show');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = "S'enregistrer →";
+    }
+  });
+
+  function closeSuccess() {
+    document.getElementById('successOverlay').classList.remove('show');
+  }
+</script>
+</body>
+</html>
